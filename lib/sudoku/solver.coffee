@@ -129,6 +129,8 @@ show_anwser = (answer) ->
     console.log line
 
 input = make_input(input)
+console.log 'input is'
 show_input(input)
 answer = solve(input)
+console.log 'answer is'
 show_anwser(answer)
