@@ -19,10 +19,11 @@ init_answer_space = ()->
     s[i] = []
     for j in [0..8]
       s[i][j] = []
+      # TODO: simplfy answer space
       # s[i][j][0] = solved, 0 is not solved, 1-9 is resolved answer
       s[i][j][0] = 0
-      # answers size
-      s[i][j][10] = 9 
+      # answers array [1..9]
+      s[i][j][10] = [1..9]
       for k in [1..9]
         # s[i][j][key] = flag, key is 0-9, 
         #  flag 0 -- key can not be answer
@@ -30,20 +31,27 @@ init_answer_space = ()->
         s[i][j][k] = 1
   return s
 
+remove_value = (answer, row, col, value) ->
+  a = answer[row][col]
+  a[value] = 0
+  j = a[10].indexOf(value)
+  if j>=0
+    a[10].splice j, 1
+    if a[10].length is 1
+      update_cell answer, row, col
+
 cell_answers = (input, answer, row, col)->
+  a = answer[row][col]
   if input[row][col] != 0
-    answer[row][col][0] = input[row][col]
-    answer[row][col][10] = 1
+    a[0] = input[row][col]
+    a[10] = []
     return
   for i in [0..8]
     v = input[i][col]
-    if v != 0
-      answer[row][col][v] = 0
+    remove_value answer, row, col, v if v != 0
 
-  for i in [0..8]
     v = input[row][i]
-    if v != 0
-      answer[row][col][v] = 0
+    remove_value answer, row, col, v if v != 0
 
   x = 3 * Math.floor row/3
   y = 3 * Math.floor col/3
@@ -51,8 +59,23 @@ cell_answers = (input, answer, row, col)->
   for i in [x .. x+2]
     for j in [y .. y+2]
       v = input[i][j]
-      if v != 0
-        answer[row][col][v] = 0
+      remove_value answer, row, col, v if v != 0
+
+update_cell = (answer, row, col) ->
+  a = answer[row][col]
+  vs = a[10]
+  if vs.length is 1
+    v = a[0] = vs[0]
+    for i in [0..8]
+      remove_value answer, i, col, v
+      remove_value answer, row, i, v
+
+    x = 3 * Math.floor row/3
+    y = 3 * Math.floor col/3
+
+    for i in [x .. x+2]
+      for j in [y .. y+2]
+        remove_value answer, i, j, v
 
 solve = (input) ->
   answer = init_answer_space()
