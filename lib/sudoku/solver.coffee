@@ -102,7 +102,7 @@ sort_guesses = (guesses) ->
   return result
 
 update_guesses = (guesses, guess) ->
-  console.log 'update guesses'
+  console.log 'update guesses, guess is'
   console.dir guess
   row = guess[0]
   col = guess[1]
@@ -145,10 +145,12 @@ update_guesses = (guesses, guess) ->
 
 do_guess = (guesses) ->
   guesses = sort_guesses guesses
+  console.log 'do_guess , guesses are '
+  console.dir guesses
   for g, i in guesses
     if not g
       console.log "guesses[#{i}] is undefined"
-    if g[3].length > 1
+    if g[3].length > 1 and not g[4]
       #use copied guess ?
       g = guesses[i] # = guesses[i].slice()
       while true
@@ -166,6 +168,8 @@ do_guess = (guesses) ->
         # mark node updating
         g[4] = true
         if update_guesses clone, g
+          console.log 'update complet, updated guesses are'
+          console.dir clone
           result = do_guess clone
           g[4] = false
           console.log "#{g[0]},#{g[1]},#{g[2]},#{g[3]} got result #{result}"
@@ -292,6 +296,19 @@ solve = (input) ->
       cell_answers(input, answer, i, j)
 
   return answer
+###
+input = [
+  [1,2,3,4,5,6,7,8,9],
+  [4,5,6,7,8,9,1,2,3],
+  [7,8,9,1,2,3,4,5,6],
+  [2,3,4,5,6,7,8,9,1],
+  [5,6,7,8,9,1,2,3,4],
+  [8,9,1,2,3,4,5,6,7],
+  [3,4,5,6,7,8,9,1,2],
+  [6,7,8,9,1,2,3,4,5],
+  [9,1,2,3,4,5,6,7,8]
+]
+###
 
 input = [
   [1,2,3,4,5,6,7,8,9],
