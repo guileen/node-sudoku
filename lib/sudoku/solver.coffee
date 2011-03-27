@@ -184,7 +184,7 @@ do_guess = (guesses) ->
   #not return means all all length is 1, means success
   return guesses
 
-start_guess = (answer) ->
+exports.start_guess = start_guess = (answer) ->
   guesses = init_guess answer 
   console.dir guesses
   guesses = do_guess guesses 
@@ -195,184 +195,11 @@ start_guess = (answer) ->
       a[10] = [g[2]]
   return guesses
 
-check_row = (answer, row) ->
-  for v in [1..9]
-    #check row
-    c = 0
-    for i in [0..8]
-      last_i = 0
-      if answer[row][i].indexOf(v) >= 0
-        c++
-        last_i = i
-    #if only 1 cell fit the number v, then this cell should be v
-    if c is 1
-      a = answer[row][last_i]
-      a[0] = v
-      a[10] = [v]
-      update_cell answer, row, last_i
-    return answer
-
-check_col = (answer, col) ->
-  for v in [1..9]
-    #check col
-    c = 0
-    for i in [0..8]
-      last_i = 0
-      if answer[i][col].indexOf(v) >= 0
-        c++
-        last_i = i
-    #if only 1 cell fit the number v, then this cell should be v
-    if c is 1
-      a = answer[last_i][col]
-      a[0] = v
-      a[10] = [v]
-      update_cell answer, last_i, col
-    return answer
-
-check_rect = (answer, x, y) ->
-  for v in [1..9]
-    c = 0
-    for i in [x .. x+2]
-      for j in [y .. y+2]
-        if answer[i][j].indexOf(v) >= 0
-          c++
-          last_i = i
-          last_j = j
-    if c is 1
-      a = answer[last_i][last_j]
-      a[0] = v
-      a[10] = [v]
-      update_cell answer, last_i, last_j
-
-reverse_check = (answer, row, col)->
-
-  x = 3 * Math.floor row/3
-  y = 3 * Math.floor col/3
-
-  for v in [1..9]
-    #check row
-    c = 0
-    for i in [0..8]
-      last_i = 0
-      if answer[row][i].indexOf(v) >= 0
-        c++
-        last_i = i
-    #if only 1 cell fit the number v, then this cell should be v
-    if c is 1
-      a = answer[row][last_i]
-      a[0] = a[10] = [v]
-      update_cell answer, row, last_i
-
-    #check col
-    c = 0
-    for i in [0..8]
-      last = 0
-      if answer[i][col].indexOf(v) >= 0
-        c++
-        last = i
-    if c is 1
-      a = answer[last_i][col]
-      a[0] = a[10] = [v]
-      update_cell answer, last_i, col
-
-    #check rect
-    c = 0
-    for i in [x .. x+2]
-      for j in [y .. y+2]
-        if answer[i][j].indexOf(v) >= 0
-          c++
-          last_i = 0
-          last_j = j
-    if c is 1
-      a = answer[last_i][last_j]
-      a[0] = a[10] = [v]
-      update_cell answer, last_i, last_j
-
-
-solve = (input) ->
+exports.solve = solve = (input) ->
   answer = init_answer_space()
   for i in [0..8]
     for j in [0..8]
       cell_answers(input, answer, i, j)
 
   return answer
-###
-input = [
-  [1,2,3,4,5,6,7,8,9],
-  [4,5,6,7,8,9,1,2,3],
-  [7,8,9,1,2,3,4,5,6],
-  [2,3,4,5,6,7,8,9,1],
-  [5,6,7,8,9,1,2,3,4],
-  [8,9,1,2,3,4,5,6,7],
-  [3,4,5,6,7,8,9,1,2],
-  [6,7,8,9,1,2,3,4,5],
-  [9,1,2,3,4,5,6,7,8]
-]
-###
 
-input = [
-  [1,2,3,4,5,6,7,8,9],
-  [4,5,6,7,8,9,1,2,3],
-  [7,8,9,1,2,3,4,5,6],
-  [2,3,4,5,6,7,8,9,1],
-  [5,6,7,8,9,1,2,3,4],
-  [8,9,1,2,3,4,5,6,7],
-  [3,4,5,6,7,8,9,1,2],
-  [6,7,8,9,1,2,3,4,5],
-  [9,1,2,3,4,5,6,7,8]
-]
-
-make_input = (full_input) ->
-  for i in [0..8]
-    for j in [0..8]
-      if Math.random() < 0.8
-        full_input[i][j] = 0
-  return full_input
-
-show_input = (input) ->
-  for i in [0..8]
-    line = ''
-    for j in [0..8]
-      line += input[i][j]
-      line += ','
-    console.log line
-
-show_anwser = (answer) ->
-  for i in [0..8]
-    line = ''
-    for j in [0..8]
-      a = answer[i][j]
-      if a[0] == 0
-        line += '['
-        for k in [1..9]
-          if a[k] == 1
-            line += k
-        line += ']'
-      else
-        line += a[0]
-      line += ','
-    console.log line
-
-input = make_input(input)
-console.log 'input is'
-show_input(input)
-answer = solve(input)
-console.log 'answer is'
-show_anwser(answer)
-start_guess(answer)
-show_anwser(answer)
-###
-for i in [0..8]
-  check_row answer, i
-console.log 'checked row answer is'
-show_anwser(answer)
-for i in [0..8]
-  check_col answer, i
-console.log 'checked col answer is'
-show_anwser(answer)
-for i in [0..2]
-  for j in [0..2]
-    check_rect answer, i, j
-console.log 'checked rect answer is'
-show_anwser(answer)
-###
